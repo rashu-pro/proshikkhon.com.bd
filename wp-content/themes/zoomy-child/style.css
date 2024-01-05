@@ -14,3 +14,32 @@ Text Domain:	 zoomy-child
     Add your custom styles here
 */
 
+.registration-form .ur-frontend-form{
+  padding:0;
+  color:#202020;
+  border:0;
+}
+.registration-form .ur-frontend-form .ur-form-row .ur-form-grid{
+  padding:0;
+}
+.ur-frontend-form .ur-form-row .ur-form-grid label.ur-label{
+  font-weight:normal;
+  font-size:1.1rem;
+}
+.registration-form .ur-frontend-form .ur-form-row .ur-form-grid input {
+  border: 1px solid #ddd;
+  border-radius: 0.4rem!important;
+  padding: 0.8rem 1rem!important;
+}
+.registration-form .ur-frontend-form .ur-button-container .ur-submit-button{
+  margin:0;
+}
+.ur-frontend-form button[type="submit"] {
+  background: #34286f;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  padding: 0.8rem 1.8rem;
+}
+
