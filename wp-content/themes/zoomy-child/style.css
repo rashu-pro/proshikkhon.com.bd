@@ -34,12 +34,21 @@ Text Domain:	 zoomy-child
 .registration-form .ur-frontend-form .ur-button-container .ur-submit-button{
   margin:0;
 }
-.ur-frontend-form button[type="submit"] {
+.ur-frontend-form button[type="submit"],
+.ur-frontend-form input[type="submit"]{
   background: #34286f;
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
   padding: 0.8rem 1.8rem;
+  float:none;
+}
+
+#user-registration.horizontal, #user-registration{
+  box-shadow:none;
+}
+.ur-frontend-form .ur-form-row .ur-form-grid label {
+  font-size: 1.1rem;
 }
 
