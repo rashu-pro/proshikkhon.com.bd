@@ -5,19 +5,28 @@
  * @return bool
  */
 function grant_access_token(){
-  $base_url_test = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
-  $base_url_live = 'https://tokenized.pay.bka.sh/v1.2.0-beta/';
+  $base_url = esc_attr(get_option('base_url_test'));
 
-  $app_key = '4f6o0cjiki2rfm34kfdadl1eqq';
-  $app_secret = '2is7hdktrekvrbljjh44ll3d9l1dtjo4pasmjvs5vl5qr3fug4b';
+  $app_key = esc_attr(get_option('app_key_test'));
+  $app_secret = esc_attr(get_option('secret_key_test'));
 
-  $username = 'sandboxTokenizedUser02';
-  $password = 'sandboxTokenizedUser02@12345';
+  $username = esc_attr(get_option('username_test'));
+  $password = esc_attr(get_option('password_test'));
+
+  $selected_payment_mode = esc_attr(get_option('bkash_payment_mode'));
+  if($selected_payment_mode === 'live'){
+    $base_url = esc_attr(get_option('base_url_live'));
+    $app_key = esc_attr(get_option('app_key_live'));
+    $app_secret = esc_attr(get_option('secret_key_live'));
+  
+    $username = esc_attr(get_option('username'));
+    $password = esc_attr(get_option('password'));
+  }
 
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => $base_url_test.'/tokenized/checkout/token/grant',
+    CURLOPT_URL => $base_url.'/tokenized/checkout/token/grant',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => '',
     CURLOPT_MAXREDIRS => 10,
@@ -68,7 +77,7 @@ function insert_token($response){
     'refresh_token' => $response->refresh_token,
     'expires_in' => time() + $response->expires_in,
     'token_type' => $response->token_type,
-    'token_mode' => 'test',
+    'token_mode' => esc_attr(get_option('bkash_payment_mode')),
     'is_active' => 1
   );
 
@@ -91,14 +100,16 @@ function insert_token($response){
 
 function get_access_token(){
   global $wpdb;
+  $selected_payment_mode = esc_attr(get_option('bkash_payment_mode'));
   $table_token = $wpdb->prefix . 'tokens';
   $sql = $wpdb->prepare("
   SELECT access_token, expires_in, refresh_token
   FROM $table_token
-  WHERE token_mode = 'test'
+  WHERE token_mode = '".$selected_payment_mode."'
   AND is_active = 1 ORDER BY created_at DESC
   ");
   $token_row = $wpdb->get_row($sql);
+  // return $token_row;
   if(!$token_row) return grant_access_token();
 
   if(time() < $token_row->expires_in) return $token_row->access_token;
@@ -107,21 +118,29 @@ function get_access_token(){
 }
 
 function refresh_access_token($refresh_token){
-  $base_url_test = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta';
-  $base_url_live = 'https://tokenized.pay.bka.sh/v1.2.0-beta/';
+  $base_url = esc_attr(get_option('base_url_test'));
 
-  $app_key = '4f6o0cjiki2rfm34kfdadl1eqq';
-  $app_secret = '2is7hdktrekvrbljjh44ll3d9l1dtjo4pasmjvs5vl5qr3fug4b';
+  $app_key = esc_attr(get_option('app_key_test'));
+  $app_secret = esc_attr(get_option('secret_key_test'));
 
-  $username = 'sandboxTokenizedUser02';
-  $password = 'sandboxTokenizedUser02@12345';
+  $username = esc_attr(get_option('username_test'));
+  $password = esc_attr(get_option('password_test'));
 
+  $selected_payment_mode = esc_attr(get_option('bkash_payment_mode'));
+  if($selected_payment_mode === 'live'){
+    $base_url = esc_attr(get_option('base_url_live'));
+    $app_key = esc_attr(get_option('app_key_live'));
+    $app_secret = esc_attr(get_option('secret_key_live'));
+  
+    $username = esc_attr(get_option('username'));
+    $password = esc_attr(get_option('password'));
+  }
 
 
   $curl = curl_init();
 
   curl_setopt_array($curl, array(
-    CURLOPT_URL => $base_url_test.'/tokenized/checkout/token/refresh',
+    CURLOPT_URL => $base_url.'/tokenized/checkout/token/refresh',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_ENCODING => '',
     CURLOPT_MAXREDIRS => 10,

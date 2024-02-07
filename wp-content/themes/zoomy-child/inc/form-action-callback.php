@@ -1,15 +1,20 @@
 <?php
-//if (isset($_POST['pay_with_bkash'])) {
-//  pay_with_bkash($_POST);
-//}
 function pay_with_bkash()
 {
-  $app_key = '4f6o0cjiki2rfm34kfdadl1eqq';
+  $app_key = esc_attr(get_option('app_key_test'));
+  $base_url = esc_attr(get_option('base_url_test'));
+
+  $selected_payment_mode = esc_attr(get_option('bkash_payment_mode'));
+  if($selected_payment_mode === 'live'){
+    $base_url = esc_attr(get_option('base_url_live'));
+    $app_key = esc_attr(get_option('app_key_live'));
+  }
+
   $access_token = get_access_token();
   if ($access_token) {
     $curl = curl_init();
     curl_setopt_array($curl, array(
-      CURLOPT_URL => 'https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout/create',
+      CURLOPT_URL => $base_url.'/tokenized/checkout/create',
       CURLOPT_RETURNTRANSFER => true,
       CURLOPT_ENCODING => '',
       CURLOPT_MAXREDIRS => 10,
@@ -19,13 +24,12 @@ function pay_with_bkash()
       CURLOPT_CUSTOMREQUEST => 'POST',
       CURLOPT_POSTFIELDS => json_encode(array(
         "mode" => "0011",
-        "payerReference" => "01619777283",
+        "payerReference" => "payment-from-proshikkhon.com.bd",
         "callbackURL" => "https://proshikkhon.com.bd/payment-success/",
-        "merchantAssociationInfo" => "MI05MID54RF09123456One",
         "amount" => $_POST['amount'],
         "currency" => "BDT",
         "intent" => "sale",
-        "merchantInvoiceNumber" => "Inv0125"
+        "merchantInvoiceNumber" => "Inv".generateUniqueSixDigitNumber()
       )),
       CURLOPT_HTTPHEADER => array(
         'x-app-key: '.$app_key,
@@ -41,4 +45,10 @@ function pay_with_bkash()
     die();
   }
 
+}
+
+function generateUniqueSixDigitNumber() {
+  // Generate a unique 6-digit number using timestamp and random number
+  $uniqueNumber = mt_rand(100000, 999999) . time() % 1000;
+  return $uniqueNumber;
 }
